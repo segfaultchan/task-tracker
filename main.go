@@ -14,60 +14,40 @@ const (
 type Task struct {
 	id int
 	desc string
-	isDone bool
+	status string
 	createdAt time.Time
 	updatedAt time.Time
 }
-
-type Commands int
-const (
-	Help Commands = iota
-	List
-	Create
-	Delete
-	Edit
-	Error
-)
 
 func greeting() {
 	fmt.Printf("Task Tracker v%v\n",VERSION)
 }
 
 // function fot safety input and with prompt for tasks
-func smartInput(prompt ...string) (string, error) {
+func smartInput(prompt ...string) (string,string,string, error) {
 	if len(prompt) == 0 {
 		fmt.Print("input-$ ")
 	} else {
 	fmt.Print(prompt[0])
 	}
-	var input string
-	_, e := fmt.Scanln(&input)
+	var p1,p2,p3 string
+	_, e := fmt.Scanln(&p1,&p2,&p3)
 	if e != nil {
 		e = errors.New("input error")
-		return "", e
+		return "","","",e
 	}
-	return input, nil
+	return p1,p2,p3,nil
 }
 
-/*func parseInput(input string) (Commands, error) {
-	switch input {
-	case "help":
-		return Help, nil
-	case "list":
-		return List, nil
-	case "create":
-		return Create, nil
-	case "delete":
-		return Delete, nil
-	case "edit":
-		return Edit, nil
-	default:
-		return Error, errors.New("unknown command")
-	}
-}*/
+func createT() (*Task, error) {
+	fmt.Println("creating task...")
+	t := new(Task)
+
+	return nil,nil
+}
 
 func main() {
+	taskBase := make([]string,0,5)
 	greeting()
-//	input, _ := smartInput(PROMPT)
-//	parseInput(input)
+//	i1,i2,i3, _ := smartInput(PROMPT)
 }
