@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 	"errors"
@@ -11,6 +12,11 @@ const (
 	VERSION = "0.0.1"
 )
 
+
+func main() {
+	
+}
+
 type Task struct {
 	id int
 	desc string
@@ -18,6 +24,8 @@ type Task struct {
 	createdAt time.Time
 	updatedAt time.Time
 }
+
+
 
 func greeting() {
 	fmt.Printf("Task Tracker v%v\n",VERSION)
@@ -39,15 +47,3 @@ func smartInput(prompt ...string) (string,string,string, error) {
 	return p1,p2,p3,nil
 }
 
-func createT() (*Task, error) {
-	fmt.Println("creating task...")
-	t := new(Task)
-
-	return nil,nil
-}
-
-func main() {
-	taskBase := make([]string,0,5)
-	greeting()
-//	i1,i2,i3, _ := smartInput(PROMPT)
-}
