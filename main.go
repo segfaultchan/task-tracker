@@ -59,8 +59,8 @@ func listT (tasks []Task) (error) {
 		fmt.Println("{")
 		fmt.Println("\tdescription:\t", t.desc )
 		fmt.Println("\tstatus:\t\t", t.status )
-		fmt.Println("\tcreated at:\t\t", t.status )
-		fmt.Println("\tupdated at:\t\t", t.status )
+		fmt.Println("\tcreated at:\t\t", t.createdAt )
+		fmt.Println("\tupdated at:\t\t", t.updatedAt )
 		fmt.Println("}")
 	}
 	return nil
