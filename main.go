@@ -13,7 +13,11 @@ const (
 )
 
 func main() {
-	tasks := make([]Task, 0)
+	input,_ := smartInput(PROMPT)
+	for _,v := range input {
+		fmt.Println("value: ", v)
+	}
+/*	tasks := make([]Task, 0)
 	p1,p2,p3,_ := smartInput(PROMPT)
 	run := true
 	for run{
@@ -27,7 +31,7 @@ func main() {
 			default:
 				fmt.Println("unknown command")
 		}
-	}
+	}*/
 }
 
 type Task struct {
@@ -65,18 +69,18 @@ func greeting() {
 }
 
 // function fot safety input and with prompt for tasks
-func smartInput(prompt ...string) (string,string,string, error) {
+func smartInput(prompt ...string) ([]string, error) {
 	if len(prompt) == 0 {
 		fmt.Print("input-$ ")
 	} else {
 	fmt.Print(prompt[0])
 	}
-	var p1,p2,p3 string
-	_, e := fmt.Scanln(&p1,&p2,&p3)
+	var output = make([]string,3)
+	_, e := fmt.Scan(&output[0],&output[1],&output[2])
 	if e != nil {
 		e = errors.New("input error")
-		return "","","",e
+		return nil,e
 	}
-	return p1,p2,p3,nil
+	return output,nil
 }
 
