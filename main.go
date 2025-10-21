@@ -1,10 +1,13 @@
 package main
 
 import (
-//	"encoding/json"
+	//	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
-	"errors"
+	//	"errors"
+	"bufio"
+	"os"
 )
 
 const (
@@ -13,25 +16,24 @@ const (
 )
 
 func main() {
-	input,_ := smartInput(PROMPT)
-	for _,v := range input {
-		fmt.Println("value: ", v)
-	}
-/*	tasks := make([]Task, 0)
-	p1,p2,p3,_ := smartInput(PROMPT)
+	tasks := make([]Task, 0)
 	run := true
 	for run{
-		switch p1 {
+		input,_ := smartInput(PROMPT)
+
+		switch input[0] {
 			case "exit":
 				run = false
+			case "help":
+				helpT()
 			case "list":
 				listT(tasks)
 			case "create":
-				createT(tasks, p2,p3)
+				createT(&tasks, input[1],input[2])
 			default:
 				fmt.Println("unknown command")
 		}
-	}*/
+	}
 }
 
 type Task struct {
@@ -41,13 +43,13 @@ type Task struct {
 	updatedAt time.Time
 }
 
-func createT (tasks []Task, desc string, status string) (error) {
+func createT (tasks *[]Task, desc string, status string) (error) {
 	var task Task
 	task.desc = desc
 	task.status = status
 	task.createdAt = time.Now()
 	task.updatedAt = task.createdAt
-	tasks = append(tasks, task)
+	*tasks = append(*tasks, task)
 	return nil
 }
 
@@ -68,6 +70,14 @@ func greeting() {
 	fmt.Printf("Task Tracker v%v\n",VERSION)
 }
 
+func helpT() {
+	fmt.Println("help:")
+	fmt.Println("\t'list' - list of tasks")
+	fmt.Println("\t'create.description.status' - create task")
+	fmt.Println("\t'exit' - exit program")
+	fmt.Println()
+}
+
 // function fot safety input and with prompt for tasks
 func smartInput(prompt ...string) ([]string, error) {
 	if len(prompt) == 0 {
@@ -75,12 +85,14 @@ func smartInput(prompt ...string) ([]string, error) {
 	} else {
 	fmt.Print(prompt[0])
 	}
+	// output for return tokens
 	var output = make([]string,3)
-	_, e := fmt.Scan(&output[0],&output[1],&output[2])
-	if e != nil {
-		e = errors.New("input error")
-		return nil,e
-	}
+	// input a command
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	input := scanner.Text()
+	output = strings.Split(input, ".")
+
 	return output,nil
 }
 
