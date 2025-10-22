@@ -141,8 +141,12 @@ func greeting() {
 
 func helpT() {
 	fmt.Println("help:")
+	fmt.Println("task contain: id, description and status")
 	fmt.Println("\t'list' - list of tasks")
-	fmt.Println("\t'create.description.status' - create task")
+	fmt.Println("\t'create description status' - create task")
+	fmt.Println("\t'update index status' - update task")
+	fmt.Println("\t'delete index' - delete task")
+	fmt.Println("\t'print index' - print one task by index")
 	fmt.Println("\t'exit' - exit program")
 	fmt.Println()
 }
