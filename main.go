@@ -89,15 +89,15 @@ func listT (tasks []Task) (error) {
 		fmt.Println("{")
 		fmt.Println("\tdescription:\t", t.desc )
 		fmt.Println("\tstatus:\t\t", t.status )
-		fmt.Println("\tcreated at:\t\t", t.createdAt )
-		fmt.Println("\tupdated at:\t\t", t.updatedAt )
+		fmt.Println("\tcreated at:\t", t.createdAt )
+		fmt.Println("\tupdated at:\t", t.updatedAt )
 		fmt.Println("}")
 	}
 	return nil
 }
 
 func deleteT (tasks *[]Task, index int) error {
-	if len(*tasks) < index+1 {
+	if len(*tasks) < index+1 || index<0 {
 		fmt.Println("not existing index of slice")
 		return nil
 	}
@@ -108,7 +108,7 @@ func deleteT (tasks *[]Task, index int) error {
 }
 
 func updateT (tasks []Task, index int, status string) error {
-	if len(tasks) < index+1 {
+	if len(tasks) < index+1 || index<0 {
 		fmt.Println("not existing index of slice")
 		return nil
 	}
@@ -119,7 +119,7 @@ func updateT (tasks []Task, index int, status string) error {
 }
 
 func printT (tasks []Task, index int) error {
-	if len(tasks) < index+1 {
+	if len(tasks) < index+1 || index<0 {
 		fmt.Println("not existing index of slice")
 		return nil
 	}
@@ -128,8 +128,8 @@ func printT (tasks []Task, index int) error {
 	fmt.Println("{")
 	fmt.Println("\tdescription:\t", t.desc )
 	fmt.Println("\tstatus:\t\t", t.status )
-	fmt.Println("\tcreated at:\t\t", t.createdAt )
-	fmt.Println("\tupdated at:\t\t", t.updatedAt )
+	fmt.Println("\tcreated at:\t", t.createdAt )
+	fmt.Println("\tupdated at:\t", t.updatedAt )
 	fmt.Println("}")
 
 	return nil
