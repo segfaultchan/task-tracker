@@ -8,6 +8,7 @@ import (
 	//	"errors"
 	"bufio"
 	"os"
+	"strconv"
 )
 
 const (
@@ -16,6 +17,7 @@ const (
 )
 
 func main() {
+	greeting()
 	tasks := make([]Task, 0)
 	run := true
 	for run{
@@ -30,6 +32,29 @@ func main() {
 				listT(tasks)
 			case "create":
 				createT(&tasks, input[1],input[2])
+			case "delete":
+				arg_int,err := strconv.Atoi(input[1])
+				if (err != nil) {
+					fmt.Println("error, not int argument")
+					continue
+				}
+				deleteT(&tasks, arg_int)
+			case "update":
+				arg_int,err := strconv.Atoi(input[1])
+				if (err != nil) {
+					fmt.Println("error, not int argument")
+					continue
+				}
+				updateT(tasks,arg_int,input[2])
+				fmt.Println("status updated")
+			case "print":
+				arg_int,err := strconv.Atoi(input[1])
+				if (err != nil) {
+					fmt.Println("error, not int argument")
+					continue
+				}
+				printT(tasks,arg_int)
+				
 			default:
 				fmt.Println("unknown command")
 		}
@@ -50,10 +75,15 @@ func createT (tasks *[]Task, desc string, status string) (error) {
 	task.createdAt = time.Now()
 	task.updatedAt = task.createdAt
 	*tasks = append(*tasks, task)
+	fmt.Println("task has created")
 	return nil
 }
 
 func listT (tasks []Task) (error) {
+	if len(tasks) == 0 {
+		fmt.Println("no tasks there")
+		return nil
+	}
 	for i,t := range tasks {
 		fmt.Println("task id:", i)
 		fmt.Println("{")
@@ -63,6 +93,45 @@ func listT (tasks []Task) (error) {
 		fmt.Println("\tupdated at:\t\t", t.updatedAt )
 		fmt.Println("}")
 	}
+	return nil
+}
+
+func deleteT (tasks *[]Task, index int) error {
+	if len(*tasks) < index+1 {
+		fmt.Println("not existing index of slice")
+		return nil
+	}
+	same := *tasks
+	*tasks = append(same[:index], same[index+1:]...)
+	fmt.Printf("%v element has deleted\n", index)
+	return nil
+}
+
+func updateT (tasks []Task, index int, status string) error {
+	if len(tasks) < index+1 {
+		fmt.Println("not existing index of slice")
+		return nil
+	}
+	ptr := &tasks[index]
+	ptr.status = status
+	ptr.updatedAt = time.Now()
+	return nil
+}
+
+func printT (tasks []Task, index int) error {
+	if len(tasks) < index+1 {
+		fmt.Println("not existing index of slice")
+		return nil
+	}
+	t := tasks[index]
+	fmt.Println("task id:", index)
+	fmt.Println("{")
+	fmt.Println("\tdescription:\t", t.desc )
+	fmt.Println("\tstatus:\t\t", t.status )
+	fmt.Println("\tcreated at:\t\t", t.createdAt )
+	fmt.Println("\tupdated at:\t\t", t.updatedAt )
+	fmt.Println("}")
+
 	return nil
 }
 
@@ -91,8 +160,7 @@ func smartInput(prompt ...string) ([]string, error) {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	input := scanner.Text()
-	output = strings.Split(input, ".")
+	output = strings.Split(input, " ")
 
 	return output,nil
 }
-
