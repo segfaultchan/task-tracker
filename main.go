@@ -31,8 +31,16 @@ func main() {
 			case "list":
 				listT(tasks)
 			case "create":
+				if len(input) < 3 {
+					fmt.Println("no/not enough arguments")
+					continue
+				}
 				createT(&tasks, input[1],input[2])
 			case "delete":
+				if len(input) < 2 {
+					fmt.Println("no/not enough arguments")
+					continue
+				}
 				arg_int,err := strconv.Atoi(input[1])
 				if (err != nil) {
 					fmt.Println("error, not int argument")
@@ -40,21 +48,30 @@ func main() {
 				}
 				deleteT(&tasks, arg_int)
 			case "update":
+				if len(input) < 3 {
+					fmt.Println("no/not enough arguments")
+					continue
+				}
 				arg_int,err := strconv.Atoi(input[1])
 				if (err != nil) {
 					fmt.Println("error, not int argument")
 					continue
 				}
-				updateT(tasks,arg_int,input[2])
+				updateT(&tasks,arg_int,input[2])
 				fmt.Println("status updated")
 			case "print":
+				if len(input) < 2 {
+					fmt.Println("no/not enough arguments")
+					continue
+				}
 				arg_int,err := strconv.Atoi(input[1])
 				if (err != nil) {
 					fmt.Println("error, not int argument")
 					continue
 				}
 				printT(tasks,arg_int)
-				
+			case "":
+				continue
 			default:
 				fmt.Println("unknown command")
 		}
@@ -107,14 +124,13 @@ func deleteT (tasks *[]Task, index int) error {
 	return nil
 }
 
-func updateT (tasks []Task, index int, status string) error {
-	if len(tasks) < index+1 || index<0 {
+func updateT (tasks *[]Task, index int, status string) error {
+	if len(*tasks) < index+1 || index<0 {
 		fmt.Println("not existing index of slice")
 		return nil
 	}
-	ptr := &tasks[index]
-	ptr.status = status
-	ptr.updatedAt = time.Now()
+	(*tasks)[index].status = status
+	(*tasks)[index].updatedAt = time.Now()
 	return nil
 }
 
