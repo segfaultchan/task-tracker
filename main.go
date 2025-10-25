@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	//	"errors"
 	"bufio"
 	"os"
 	"os/exec"
@@ -16,6 +15,17 @@ const (
 	PROMPT = "tasks-$ "
 	VERSION = "0.0.2"
 )
+// maybe later i'll realise json for saving tasks
+/* func saveT(tasks []Task, fName string) error {
+	file,err := os.Open(fName)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer file.Close()
+
+	return nil
+}*/
 
 func main() {
 	greeting()
@@ -32,17 +42,17 @@ func main() {
 				clr.Run()
 			case "exit":
 				run = false
-			case "help":
+			case "help","h":
 				helpT()
-			case "list":
+			case "list","ls":
 				listT(tasks)
-			case "create":
+			case "create","c","mk":
 				if len(input) < 3 {
 					fmt.Println("no/not enough arguments")
 					continue
 				}
 				createT(&tasks, input[1],input[2])
-			case "delete":
+			case "delete","del","d":
 				if len(input) < 2 {
 					fmt.Println("no/not enough arguments")
 					continue
@@ -53,7 +63,7 @@ func main() {
 					continue
 				}
 				deleteT(&tasks, arg_int)
-			case "update":
+			case "update","u","upd":
 				if len(input) < 3 {
 					fmt.Println("no/not enough arguments")
 					continue
@@ -65,7 +75,7 @@ func main() {
 				}
 				updateT(&tasks,arg_int,input[2])
 				fmt.Println("status updated")
-			case "print":
+			case "print","p":
 				if len(input) < 2 {
 					fmt.Println("no/not enough arguments")
 					continue
@@ -77,6 +87,8 @@ func main() {
 				}
 				printT(tasks,arg_int)
 			case "":
+		case "shef","shefos","linux320":
+			fmt.Println("linux 320kg shefos")
 				continue
 			default:
 				fmt.Println("unknown command")
@@ -107,14 +119,8 @@ func listT (tasks []Task) (error) {
 		fmt.Println("no tasks there")
 		return nil
 	}
-	for i,t := range tasks {
-		fmt.Println("task id:", i)
-		fmt.Println("{")
-		fmt.Println("\tdescription:\t", t.desc )
-		fmt.Println("\tstatus:\t\t", t.status )
-		fmt.Println("\tcreated at:\t", t.createdAt )
-		fmt.Println("\tupdated at:\t", t.updatedAt )
-		fmt.Println("}")
+	for i := range len(tasks) {
+		printT(tasks,i)
 	}
 	return nil
 }
@@ -148,12 +154,13 @@ func printT (tasks []Task, index int) error {
 	t := tasks[index]
 	fmt.Println("task id:", index)
 	fmt.Println("{")
-	fmt.Println("\tdescription:\t", t.desc )
-	fmt.Println("\tstatus:\t\t", t.status )
-	fmt.Println("\tcreated at:\t", t.createdAt )
-	fmt.Println("\tupdated at:\t", t.updatedAt )
+	fmt.Printf("\tdescription:\t%v\n", t.desc )
+	fmt.Printf("\tstatus:\t\t%v\n", t.status )
+	v1,v2,v3 := t.createdAt.Clock()
+	fmt.Printf("\tcreated at:\t%v:%v:%v\n", v1,v2,v3 )
+	v1,v2,v3 = t.updatedAt.Clock()
+	fmt.Printf("\tupdated at:\t%v:%v:%v\n", v1,v2,v3 )
 	fmt.Println("}")
-
 	return nil
 }
 
