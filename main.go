@@ -8,12 +8,13 @@ import (
 	//	"errors"
 	"bufio"
 	"os"
+	"os/exec"
 	"strconv"
 )
 
 const (
 	PROMPT = "tasks-$ "
-	VERSION = "0.0.1"
+	VERSION = "0.0.2"
 )
 
 func main() {
@@ -24,6 +25,11 @@ func main() {
 		input,_ := smartInput(PROMPT)
 
 		switch input[0] {
+		// it may not work on windows (i dont care, i write it for linux)
+			case "clear":
+				clr := exec.Command("clear")
+				clr.Stdout = os.Stdout
+				clr.Run()
 			case "exit":
 				run = false
 			case "help":
@@ -159,11 +165,12 @@ func helpT() {
 	fmt.Println("help:")
 	fmt.Println("task contain: id, description and status")
 	fmt.Println("\t'list' - list of tasks")
-	fmt.Println("\t'create description status' - create task")
-	fmt.Println("\t'update index status' - update task")
-	fmt.Println("\t'delete index' - delete task")
-	fmt.Println("\t'print index' - print one task by index")
+	fmt.Println("\t'create !description !status' - create task")
+	fmt.Println("\t'update !index !status' - update task")
+	fmt.Println("\t'delete !index' - delete task")
+	fmt.Println("\t'print !index' - print one task by index")
 	fmt.Println("\t'exit' - exit program")
+	fmt.Println("DONT FORGET '!'")
 	fmt.Println()
 }
 
@@ -180,7 +187,7 @@ func smartInput(prompt ...string) ([]string, error) {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	input := scanner.Text()
-	output = strings.Split(input, " ")
+	output = strings.Split(input, " !")
 
 	return output,nil
 }
