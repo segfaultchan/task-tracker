@@ -1,7 +1,7 @@
 package main
 
 import (
-	//	"encoding/json"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -13,32 +13,34 @@ import (
 
 const (
 	PROMPT = "tasks-$ "
-	VERSION = "0.0.2"
+	VERSION = "0.1.0"
 )
-// maybe later i'll realise json for saving tasks
-/*func exportJson(tasks []Task, fName string) error {
-	file,err := os.Open(fName)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	defer file.Close()
-	
-	return nil
-}
-
-func main() {
-}*/
 
 func main() {
 	greeting()
-	tasks := make([]Task, 0)
+	filename,isEmpty := getArg()
+	var tasks []Task
+	if !isEmpty {
+		tasks,_ = importJson(filename)
+	} else {
+		tasks = make([]Task, 0)
+	}
 	run := true
 	for run{
 		input,_ := smartInput(PROMPT)
 
 		switch input[0] {
 		// it may not work on windows (i dont care, i write it for linux)
+			case "save","s":
+				if !isEmpty {
+					exportJson(tasks,filename)
+				} else {
+					if len(input) < 2 {
+						fmt.Println("needs a filename for save tasks")
+						continue
+					}
+					exportJson(tasks,input[1])
+				}
 			case "clear":
 				clr := exec.Command("clear")
 				clr.Stdout = os.Stdout
@@ -100,10 +102,47 @@ func main() {
 }
 
 type Task struct {
-	desc string
-	status string
-	createdAt string
-	updatedAt string
+	Desc string
+	Status string
+	CreatedAt string
+	UpdatedAt string
+}
+
+// export will delete existing file
+func exportJson(tasks []Task, fName string) error {
+	os.Create(fName)
+// encoding to bytes for json
+	tasks_enc,err := json.Marshal(tasks)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	err = os.WriteFile(fName, tasks_enc, 0666)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return nil
+}
+
+func importJson(fName string) (tasks []Task, err error) {
+	if _,err = os.Stat(fName); err != nil {
+		fmt.Println(err)
+		return
+	}
+	tasks_enc,err := os.ReadFile(fName)
+	err = json.Unmarshal(tasks_enc,&tasks)
+	return
+}
+func getArg() (arg string, isEmpty bool) {
+	if len(os.Args) < 2 {
+		arg = ""
+		isEmpty = true
+		return
+	}
+	arg = os.Args[1]
+	isEmpty = false
+	return
 }
 
 func timeToStr(t time.Time) (ts string) {
@@ -134,10 +173,10 @@ func timeToStr(t time.Time) (ts string) {
 
 func createT (tasks *[]Task, desc string, status string) (error) {
 	var task Task
-	task.desc = desc
-	task.status = status
-	task.createdAt = timeToStr(time.Now())
-	task.updatedAt = task.createdAt
+	task.Desc = desc
+	task.Status = status
+	task.CreatedAt = timeToStr(time.Now())
+	task.UpdatedAt = task.CreatedAt
 	*tasks = append(*tasks, task)
 	fmt.Println("task has created")
 	return nil
@@ -170,8 +209,8 @@ func updateT (tasks *[]Task, index int, status string) error {
 		fmt.Println("not existing index of slice")
 		return nil
 	}
-	(*tasks)[index].status = status
-	(*tasks)[index].updatedAt = timeToStr(time.Now())
+	(*tasks)[index].Status = status
+	(*tasks)[index].UpdatedAt = timeToStr(time.Now())
 	return nil
 }
 
@@ -183,10 +222,10 @@ func printT (tasks []Task, index int) error {
 	t := tasks[index]
 	fmt.Println("task id:", index)
 	fmt.Println("{")
-	fmt.Printf("\tdescription:\t%v\n", t.desc )
-	fmt.Printf("\tstatus:\t\t%v\n", t.status )
-	fmt.Printf("\tcreated at:\t%v\n", t.createdAt )
-	fmt.Printf("\tupdated at:\t%v\n", t.updatedAt )
+	fmt.Printf("\tdescription:\t%v\n", t.Desc )
+	fmt.Printf("\tstatus:\t\t%v\n", t.Status )
+	fmt.Printf("\tcreated at:\t%v\n", t.CreatedAt )
+	fmt.Printf("\tupdated at:\t%v\n", t.UpdatedAt )
 	fmt.Println("}")
 	return nil
 }
@@ -203,6 +242,7 @@ func helpT() {
 	fmt.Println("\t'update !index !status' - update task")
 	fmt.Println("\t'delete !index' - delete task")
 	fmt.Println("\t'print !index' - print one task by index")
+	fmt.Println("\t'save' - save tasks to file")
 	fmt.Println("\t'exit' - exit program")
 	fmt.Println("DONT FORGET '!'")
 	fmt.Println()
