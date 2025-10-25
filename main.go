@@ -16,15 +16,18 @@ const (
 	VERSION = "0.0.2"
 )
 // maybe later i'll realise json for saving tasks
-/* func saveT(tasks []Task, fName string) error {
+/*func exportJson(tasks []Task, fName string) error {
 	file,err := os.Open(fName)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 	defer file.Close()
-
+	
 	return nil
+}
+
+func main() {
 }*/
 
 func main() {
@@ -99,15 +102,41 @@ func main() {
 type Task struct {
 	desc string
 	status string
-	createdAt time.Time
-	updatedAt time.Time
+	createdAt string
+	updatedAt string
+}
+
+func timeToStr(t time.Time) (ts string) {
+	hI,mI,sI := t.Clock()
+	h,m,s := strconv.Itoa(hI),strconv.Itoa(mI),strconv.Itoa(sI)
+	if hI < 10 {
+		ts+="0"
+		ts+=h
+	} else {
+		ts+=h
+	}
+	ts+=":"
+	if mI < 10 {
+		ts+="0"
+		ts+=m
+	} else {
+		ts+=m
+	}
+	ts+=":"
+	if sI < 10 {
+		ts+="0"
+		ts+=s
+	} else {
+		ts+=s
+	}
+	return ts
 }
 
 func createT (tasks *[]Task, desc string, status string) (error) {
 	var task Task
 	task.desc = desc
 	task.status = status
-	task.createdAt = time.Now()
+	task.createdAt = timeToStr(time.Now())
 	task.updatedAt = task.createdAt
 	*tasks = append(*tasks, task)
 	fmt.Println("task has created")
@@ -142,7 +171,7 @@ func updateT (tasks *[]Task, index int, status string) error {
 		return nil
 	}
 	(*tasks)[index].status = status
-	(*tasks)[index].updatedAt = time.Now()
+	(*tasks)[index].updatedAt = timeToStr(time.Now())
 	return nil
 }
 
@@ -156,10 +185,8 @@ func printT (tasks []Task, index int) error {
 	fmt.Println("{")
 	fmt.Printf("\tdescription:\t%v\n", t.desc )
 	fmt.Printf("\tstatus:\t\t%v\n", t.status )
-	v1,v2,v3 := t.createdAt.Clock()
-	fmt.Printf("\tcreated at:\t%v:%v:%v\n", v1,v2,v3 )
-	v1,v2,v3 = t.updatedAt.Clock()
-	fmt.Printf("\tupdated at:\t%v:%v:%v\n", v1,v2,v3 )
+	fmt.Printf("\tcreated at:\t%v\n", t.createdAt )
+	fmt.Printf("\tupdated at:\t%v\n", t.updatedAt )
 	fmt.Println("}")
 	return nil
 }
